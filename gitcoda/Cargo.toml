@@ -1,0 +1,25 @@
+[package]
+name = "gitcoda"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+chrono = { version = "0.4", features = ["serde"] }
+console_error_panic_hook = "0.1.7"
+leptos = { version = "0.8.17", features = ["csr", "nightly"] }
+leptos_router = "0.8.13"
+console_log = "1.0"
+log = "0.4.22"
+tw_merge = { version = "0.1.21", features = ["variant"] }
+leptos_ui = "0.3.22"
+leptos_icons = "0.7.0"
+icondata = "0.7.0"
+strum = { version = "0.26", features = ["derive"] }
+strum_macros = "0.26"
+gloo-net = "0.6.0"
+toml = "0.8.23"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+js-sys = "0.3"
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = ["Window", "Document", "Element", "HtmlElement", "HtmlScriptElement", "Node"] }

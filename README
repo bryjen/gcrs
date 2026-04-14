@@ -1,0 +1,6 @@
+bryjen.github.io
+============
+
+Portfolio page written in rust + leptos, using rust ui components, available 
+at `https://bryjen.net/`. Build the project by running `nix-shell`, then `dev.sh`.
+Compilation has only been tested with nix.
