@@ -1,3 +1,4 @@
+use crate::components::layout::header::Header;
 use crate::pages::home::Home;
 use leptos::prelude::*;
 use leptos_router::components::ParentRoute;
@@ -10,7 +11,8 @@ use leptos_router::{
 fn MainLayout() -> impl IntoView {
     view! {
         <main class="relative min-h-screen" data-vaul-drawer-wrapper>
-            <div class="mx-auto min-h-screen max-w-screen-xl px-4 md:px-8 lg:px-16">
+            <Header />
+            <div class="mx-auto min-h-screen max-w-screen-xl px-4 md:px-8 lg:px-12">
                 <Outlet/>
             </div>
         </main>

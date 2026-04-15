@@ -240,7 +240,7 @@ pub fn Home() -> impl IntoView {
         },
     ];
     view! {
-        <div class="flex flex-col gap-6 py-12 pt-24 pb-[50vh]">
+        <div class="flex flex-col gap-6 py-12 pt-8 pb-[50vh]">
 
             <div id="repo-header" class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
