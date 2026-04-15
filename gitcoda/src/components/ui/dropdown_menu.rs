@@ -321,7 +321,7 @@ pub fn DropdownMenuContent(
     };
 
     view! {
-        <script src="/static/js/lock_scroll.js"></script>
+        <script src="/js/lock_scroll.js"></script>
 
         <div
             data-name="DropdownMenuContent"

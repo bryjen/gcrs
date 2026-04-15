@@ -1,38 +1,37 @@
-use leptos::html::Canvas;
+use crate::components::ui::collapsible::{Collapsible, CollapsibleContent};
 use leptos::prelude::*;
-use wasm_bindgen::JsCast;
-use wasm_bindgen::closure::Closure;
+use serde::{Deserialize, Serialize};
 
-use crate::components::ui::collapsible::{Collapsible, CollapsibleContent, CollapsibleTrigger};
-
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct LanguageBar {
     pub label: String,
     pub percent: f64,
     pub color: String,
 }
 
-#[component]
+#[island]
 pub fn RepoLanguageBar(languages: Vec<LanguageBar>) -> impl IntoView {
-    let canvas_ref = NodeRef::<Canvas>::new();
     let open = RwSignal::new(false);
+    let canvas_ref = NodeRef::<leptos::html::Canvas>::new();
 
-    let languages_for_effect = languages.clone();
-    Effect::new(move |_| {
-        if canvas_ref.get().is_none() {
-            return;
-        }
-
-        let handlers = build_handlers_array(&languages_for_effect, open);
-        js_sys::Reflect::set(
-            &web_sys::window().unwrap(),
-            &wasm_bindgen::JsValue::from_str("__langBarHandlers"),
-            &handlers,
-        )
-        .unwrap();
-
-        inject_or_run_script(build_chart_script(&languages_for_effect));
-    });
+    // Runs only on the client — Effects are no-ops during SSR.
+    #[cfg(not(feature = "ssr"))]
+    {
+        let languages_for_effect = languages.clone();
+        Effect::new(move |_| {
+            if canvas_ref.get().is_none() {
+                return;
+            }
+            let handlers = build_handlers_array(&languages_for_effect, open);
+            js_sys::Reflect::set(
+                &leptos::web_sys::window().unwrap(),
+                &leptos::wasm_bindgen::JsValue::from_str("__langBarHandlers"),
+                &handlers,
+            )
+            .unwrap();
+            inject_or_run_script(build_chart_script(&languages_for_effect));
+        });
+    }
 
     let legend = languages
         .iter()
@@ -69,15 +68,16 @@ pub fn RepoLanguageBar(languages: Vec<LanguageBar>) -> impl IntoView {
     }
 }
 
+// ── Wasm-only helpers ─────────────────────────────────────────────────────────
+
+#[cfg(not(feature = "ssr"))]
 fn on_language_click(_lang: &LanguageBar, open: RwSignal<bool>) {
-    // web_sys::window()
-    //     .unwrap()
-    //     .alert_with_message(&format!("Language: {}", _lang.label))
-    //     .unwrap();
     open.update(|v| *v = !*v);
 }
 
+#[cfg(not(feature = "ssr"))]
 fn build_handlers_array(languages: &[LanguageBar], open: RwSignal<bool>) -> js_sys::Array {
+    use leptos::wasm_bindgen::{closure::Closure, JsCast};
     let array = js_sys::Array::new();
     for lang in languages {
         let lang = lang.clone();
@@ -88,6 +88,7 @@ fn build_handlers_array(languages: &[LanguageBar], open: RwSignal<bool>) -> js_s
     array
 }
 
+#[cfg(not(feature = "ssr"))]
 fn build_chart_script(languages: &[LanguageBar]) -> String {
     let languages_json = languages
         .iter()
@@ -163,8 +164,10 @@ fn build_chart_script(languages: &[LanguageBar]) -> String {
     )
 }
 
+#[cfg(not(feature = "ssr"))]
 fn inject_or_run_script(script: String) {
-    let window = web_sys::window().unwrap();
+    use leptos::wasm_bindgen::{closure::Closure, JsCast};
+    let window = leptos::web_sys::window().unwrap();
     let document = window.document().unwrap();
 
     if document.get_element_by_id("chartjs-script").is_none() {

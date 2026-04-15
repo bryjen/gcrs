@@ -5,87 +5,77 @@ use icondata as i;
 
 use crate::components::ui::tabs::{Tabs, TabsContent, TabsList, TabsTrigger, TabsVariant};
 
-#[derive(Clone)]
-struct TabDef {
-    value: &'static str,
-    icon: icondata::Icon,
-    label: &'static str,
-    visible: bool,
-    content: fn() -> AnyView,
-}
-
-#[component]
+#[island]
 pub fn RepoOverview(is_owner: bool) -> impl IntoView {
-    let tabs = vec![
-        TabDef {
-            value: "preview",
-            icon: i::CgReadme,
-            label: "README",
-            visible: true,
-            content: preview_content,
-        },
-        TabDef {
-            value: "codeofconduct",
-            icon: i::TbHeartHandshakeOutline,
-            label: "Code of conduct",
-            visible: true,
-            content: code_content,
-        },
-        TabDef {
-            value: "contributin",
-            icon: i::ChPeople,
-            label: "Contributing",
-            visible: is_owner,
-            content: settings_content,
-        },
-        TabDef {
-            value: "license",
-            icon: i::OcLawLg,
-            label: "MIT License",
-            visible: is_owner,
-            content: settings_content,
-        },
-        TabDef {
-            value: "security",
-            icon: i::MdiSecurity,
-            label: "Security",
-            visible: is_owner,
-            content: settings_content,
-        },
+    let tab_configs = vec![
+        ("preview", i::CgReadme, "README", true),
+        ("codeofconduct", i::TbHeartHandshakeOutline, "Code of conduct", true),
+        ("contributing", i::ChPeople, "Contributing", is_owner),
+        ("license", i::OcLawLg, "MIT License", is_owner),
+        ("security", i::MdiSecurity, "Security", is_owner),
     ];
 
-    let visible_tabs: Vec<_> = tabs.into_iter().filter(|t| t.visible).collect();
-    let visible_tabs_content = visible_tabs.clone();
+    let visible_tabs: Vec<_> = tab_configs
+        .into_iter()
+        .filter(|t| t.3)
+        .map(|(val, icon, label, _)| (val.to_string(), icon, label))
+        .collect();
+
+    let triggers = visible_tabs.clone();
 
     view! {
         <Tabs default_value="preview" class="w-full">
             <TabsList variant=TabsVariant::Line>
-                {visible_tabs.into_iter().map(|t| view! {
-                    <TabsTrigger value={t.value}>
-                        <div class="mx-1 flex gap-2">
-                            <Icon icon={t.icon} width="20" height="20"/>
-                            {t.label}
-                        </div>
-                    </TabsTrigger>
+                {triggers.into_iter().map(|(val, icon, label)| {
+                    view! {
+                        <TabsTrigger value={val}>
+                            <div class="mx-1 flex gap-2">
+                                <Icon icon={icon} width="20" height="20"/>
+                                {label}
+                            </div>
+                        </TabsTrigger>
+                    }
                 }).collect_view()}
             </TabsList>
-            {visible_tabs_content.into_iter().map(|t| view! {
-                <TabsContent value={t.value}>
-                    {(t.content)()}
-                </TabsContent>
+            {visible_tabs.into_iter().map(|(val, _, _)| {
+                let val_clone = val.clone();
+                view! {
+                    <TabsContent value={val}>
+                        {render_tab_content(val_clone)}
+                    </TabsContent>
+                }
             }).collect_view()}
         </Tabs>
     }
 }
 
-fn preview_content() -> AnyView {
-    view! { <p>"preview"</p> }.into_any()
+fn render_tab_content(tab: String) -> AnyView {
+    match tab.as_str() {
+        "preview" => preview_content().into_any(),
+        "codeofconduct" => code_of_conduct_content().into_any(),
+        "contributing" => contributing_content().into_any(),
+        "license" => license_content().into_any(),
+        "security" => security_content().into_any(),
+        _ => view! { <p>"unknown"</p> }.into_any(),
+    }
 }
 
-fn code_content() -> AnyView {
-    view! { <p>"code"</p> }.into_any()
+fn preview_content() -> impl IntoView {
+    view! { <p>"preview"</p> }
 }
 
-fn settings_content() -> AnyView {
-    view! { <p>"settings"</p> }.into_any()
+fn code_of_conduct_content() -> impl IntoView {
+    view! { <p>"code of conduct"</p> }
+}
+
+fn contributing_content() -> impl IntoView {
+    view! { <p>"contributing"</p> }
+}
+
+fn license_content() -> impl IntoView {
+    view! { <p>"license"</p> }
+}
+
+fn security_content() -> impl IntoView {
+    view! { <p>"security"</p> }
 }

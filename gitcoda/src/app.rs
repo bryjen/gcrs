@@ -8,6 +8,7 @@ use leptos_router::{
     path,
 };
 
+#[allow(non_snake_case)]
 fn MainLayout() -> impl IntoView {
     view! {
         <main class="relative min-h-screen" data-vaul-drawer-wrapper>
@@ -26,11 +27,43 @@ pub fn App() -> impl IntoView {
             <Routes fallback=|| "Not found">
                 <ParentRoute path=path!("/") view=MainLayout>
                     <Route path=path!("") view=Home />
-                    /*
-                    <Route path=path!("projects") view=ProjectsPage />
-                    */
                 </ParentRoute>
             </Routes>
         </Router>
+    }
+}
+
+// Shell is only needed on the server — it wraps App in the full HTML document.
+#[cfg(feature = "ssr")]
+pub fn shell(options: leptos::config::LeptosOptions) -> impl IntoView {
+    use leptos_meta::{MetaTags, provide_meta_context};
+    use leptos_router::components::Router as LeptosRouter;
+
+    provide_meta_context();
+
+    view! {
+        <!DOCTYPE html>
+        <html class="dark" lang="en">
+            <head>
+                <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+                    rel="stylesheet"
+                />
+                <link rel="stylesheet" href="/pkg/gitcoda.css" />
+                <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+                <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+                <link rel="shortcut icon" href="/favicon.ico" />
+                <AutoReload options=options.clone() />
+                <HydrationScripts options=options islands=true />
+                <MetaTags />
+            </head>
+            <body>
+                <App />
+            </body>
+        </html>
     }
 }
