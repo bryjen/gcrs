@@ -5,14 +5,20 @@ use icondata as i;
 
 use crate::components::ui::tabs::{Tabs, TabsContent, TabsList, TabsTrigger, TabsVariant};
 
-#[island]
+#[component]
 pub fn RepoOverview(is_owner: bool) -> impl IntoView {
+    let _ = is_owner;
+    view! { <RepoOverviewTabsIsland /> }
+}
+
+#[island]
+fn RepoOverviewTabsIsland() -> impl IntoView {
     let tab_configs = vec![
         ("preview", i::CgReadme, "README", true),
         ("codeofconduct", i::TbHeartHandshakeOutline, "Code of conduct", true),
-        ("contributing", i::ChPeople, "Contributing", is_owner),
-        ("license", i::OcLawLg, "MIT License", is_owner),
-        ("security", i::MdiSecurity, "Security", is_owner),
+        ("contributing", i::ChPeople, "Contributing", true),
+        ("license", i::OcLawLg, "MIT License", true),
+        ("security", i::MdiSecurity, "Security", true),
     ];
 
     let visible_tabs: Vec<_> = tab_configs

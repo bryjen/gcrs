@@ -1,12 +1,10 @@
-use chrono::{Duration, Local, NaiveDate, NaiveDateTime, Utc};
+use chrono::{Duration, Local, NaiveDateTime, Utc};
 use leptos::prelude::*;
 use leptos_icons::Icon;
 
 use icondata as i;
 
-use crate::components::ui::avatar::{
-    Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage, AvatarSize,
-};
+use crate::components::ui::avatar::{Avatar, AvatarImage, AvatarSize};
 use crate::components::ui::button::{Button, ButtonSize, ButtonVariant};
 
 #[derive(Clone)]

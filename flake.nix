@@ -22,6 +22,7 @@
           buildInputs = [
             pkgs.rustup
             pkgs.pkg-config
+            pkgs.llvmPackages.lld
 
             # TLS / HTTP (needed by reqwest / axum / tower-http)
             pkgs.openssl

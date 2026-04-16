@@ -1,5 +1,6 @@
 use crate::components::layout::header::Header;
 use crate::pages::home::Home;
+use crate::pages::repo::Repo;
 use leptos::prelude::*;
 use leptos_router::components::ParentRoute;
 use leptos_router::nested_router::Outlet;
@@ -28,6 +29,9 @@ pub fn App() -> impl IntoView {
                 <ParentRoute path=path!("/") view=MainLayout>
                     <Route path=path!("") view=Home />
                 </ParentRoute>
+                <ParentRoute path=path!("/repo/") view=MainLayout>
+                    <Route path=path!("") view=Repo />
+                </ParentRoute>
             </Routes>
         </Router>
     }
@@ -37,7 +41,6 @@ pub fn App() -> impl IntoView {
 #[cfg(feature = "ssr")]
 pub fn shell(options: leptos::config::LeptosOptions) -> impl IntoView {
     use leptos_meta::{MetaTags, provide_meta_context};
-    use leptos_router::components::Router as LeptosRouter;
 
     provide_meta_context();
 

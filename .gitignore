@@ -1,7 +1,7 @@
 # Build output
 /target/
 /dist/
-/gitcoda/dist/
+/gitcoda_web/dist/
 .trunk/
 
 # JavaScript dependencies
@@ -24,3 +24,11 @@
 
 # Project-local scratch space
 /context/
+
+# Local DB files
+/var/
+*.sqlite
+*.sqlite3
+*.db
+
+.cargo/

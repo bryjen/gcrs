@@ -1,12 +1,12 @@
 [workspace]
-members = ["gitcoda"]
+members = ["gitcoda_web", "gitcoda"]
 resolver = "2"
 
 [[workspace.metadata.leptos]]
 name               = "gitcoda"
 output-name        = "gitcoda"
-bin-package        = "gitcoda"
-lib-package        = "gitcoda"
+bin-package        = "gitcoda_web"
+lib-package        = "gitcoda_web"
 site-root          = "target/site"
 site-pkg-dir       = "pkg"
 tailwind-input-file = "static/css/tailwind.css"
@@ -22,7 +22,7 @@ lib-default-features = false
 
 [profile.dev]
 opt-level = 1
-codegen-units = 1
+codegen-units = 256
 
 [profile.release]
 opt-level = "z"

@@ -126,7 +126,7 @@ target/site/                      (staged for Axum to serve)
 - Tool: `tailwindcss` CLI (v4) invoked by cargo-leptos
 - Output: `target/site/pkg/gitcoda.css` (fully compiled CSS)
 
-### 6. **Server Entry Point (gitcoda/src/main.rs)**
+### 6. **Server Entry Point (gitcoda_web/src/main.rs)**
 
 The SSR server bootstrap:
 
@@ -135,7 +135,7 @@ The SSR server bootstrap:
 #[tokio::main]
 async fn main() {
     use axum::Router;
-    use gitcoda::app::{shell, App};
+    use gitcoda_web::app::{shell, App};
     
     let conf = get_configuration(None).unwrap();
     let options = conf.leptos_options;
@@ -162,7 +162,7 @@ async fn main() {
 - The `shell()` function (from app.rs) wraps the page in full HTML document
 - Serves static assets (including compiled CSS) via `CompressionLayer`
 
-### 7. **Shell Function (gitcoda/src/app.rs)**
+### 7. **Shell Function (gitcoda_web/src/app.rs)**
 
 The SSR HTML wrapper:
 
@@ -196,7 +196,7 @@ pub fn shell(options: leptos::config::LeptosOptions) -> impl IntoView {
 - Loads hydration scripts via `HydrationScripts` — these mount islands in the browser
 - `islands=true` tells Leptos to only ship WASM for island components
 
-### 8. **Hydration Entry Point (gitcoda/src/lib.rs)**
+### 8. **Hydration Entry Point (gitcoda_web/src/lib.rs)**
 
 The WASM entrypoint:
 
@@ -255,10 +255,10 @@ Tells rust-analyzer to analyze code assuming both features are active, preventin
 ```
 cargo leptos watch
     ├─ Compile server binary (--features ssr)
-    │  └─ gitcoda/src/main.rs → target/debug/gitcoda
+    │  └─ gitcoda_web/src/main.rs → target/debug/gitcoda_web
     │
     ├─ Compile WASM (--target wasm32-unknown-unknown --features hydrate)
-    │  └─ gitcoda/src/lib.rs → target/site/pkg/gitcoda_bg.wasm
+    │  └─ gitcoda_web/src/lib.rs → target/site/pkg/gitcoda_bg.wasm
     │
     ├─ Compile Tailwind
     │  └─ static/css/tailwind.css → target/site/pkg/gitcoda.css

@@ -5,15 +5,35 @@
 #[tokio::main]
 async fn main() {
     use axum::Router;
-    use gitcoda::app::{App, shell};
+    use gitcoda_web::app::{App, shell};
+    use gitcoda::{DbPool, RepoService, GitService};
     use leptos::prelude::*;
     use leptos_axum::{LeptosRoutes, generate_route_list};
     use tower_http::compression::CompressionLayer;
+    use std::sync::Arc;
+
+    use axum::extract::Extension;
 
     let conf = get_configuration(None).unwrap();
     let options = conf.leptos_options;
     let addr = options.site_addr;
     let routes = generate_route_list(App);
+
+    // Initialize database
+    let db = Arc::new(
+        DbPool::from_url("sqlite:gitcoda.db")
+            .await
+            .expect("Failed to connect to database")
+    );
+
+    // Initialize services
+    let repo_service = Arc::new(RepoService {
+        db: db.clone(),
+    });
+
+    let git_service = Arc::new(GitService {
+        repo_svc: repo_service.clone(),
+    });
 
     let app = Router::new()
         .leptos_routes(&options, routes, {
@@ -22,6 +42,8 @@ async fn main() {
         })
         .fallback(leptos_axum::file_and_error_handler(shell))
         .layer(CompressionLayer::new())
+        .layer(Extension(repo_service))
+        .layer(Extension(git_service))
         .with_state(options);
 
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
