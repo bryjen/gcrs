@@ -9,7 +9,6 @@ async fn main() {
     use gitcoda::{DbPool, RepoService, GitService};
     use leptos::prelude::*;
     use leptos_axum::{LeptosRoutes, generate_route_list};
-    use tower_http::compression::CompressionLayer;
     use std::sync::Arc;
 
     use axum::extract::Extension;
@@ -41,7 +40,6 @@ async fn main() {
             move || shell(options.clone())
         })
         .fallback(leptos_axum::file_and_error_handler(shell))
-        .layer(CompressionLayer::new())
         .layer(Extension(repo_service))
         .layer(Extension(git_service))
         .with_state(options);
