@@ -7,11 +7,6 @@ use repo_tab_strip::*;
 mod core;
 use core::*;
 
-use crate::components::ui::button::{ButtonSize, ButtonVariant};
-use crate::components::ui::drawer::{
-    Drawer, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerPosition, DrawerTitle,
-    DrawerTrigger, DrawerVariant,
-};
 use icondata as i;
 use leptos::prelude::*;
 use leptos_icons::Icon;

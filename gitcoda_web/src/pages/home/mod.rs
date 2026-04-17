@@ -4,6 +4,9 @@ use crate::components::custom::activity_feed::{
 use crate::components::custom::heatmap::{ActivityHeatmap, HeatmapData};
 use leptos::prelude::*;
 
+mod link_panel;
+use link_panel::LinkPanel;
+
 #[component]
 pub fn Home() -> impl IntoView {
     let heatmap_data = generate_heatmap_data();
@@ -23,26 +26,7 @@ pub fn Home() -> impl IntoView {
                 </div>
 
                 <div class="flex-1 w-full">
-                    <h3 class="text-base font-semibold text-foreground mb-4">
-                        "Repositories"
-                    </h3>
-                    <div class="space-y-2">
-                        <a href="/repo" class="block text-primary hover:underline transition-colors">
-                            "noctua"
-                        </a>
-                        <a href="/repo" class="block text-primary hover:underline transition-colors">
-                            "ShadcnBlazor"
-                        </a>
-                        <a href="/repo" class="block text-primary hover:underline transition-colors">
-                            "bryjen.github.io"
-                        </a>
-                        <a href="/repo" class="block text-primary hover:underline transition-colors">
-                            "remote-infra"
-                        </a>
-                        <a href="/repo" class="block text-primary hover:underline transition-colors">
-                            "nixos-dotfiles"
-                        </a>
-                    </div>
+                    <LinkPanel />
                 </div>
             </div>
 

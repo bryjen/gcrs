@@ -24,6 +24,7 @@
             pkgs.pkg-config
             pkgs.llvmPackages.lld
             pkgs.mold
+            pkgs.sccache
 
             # TLS / HTTP (needed by reqwest / axum / tower-http)
             pkgs.openssl
@@ -34,10 +35,21 @@
 
             # cargo-leptos calls the Tailwind binary; make sure it is on PATH
             pkgs.tailwindcss_4
+
+            # Dependency auditing
+            pkgs.cargo-udeps
           ];
 
           shellHook = ''
             export PATH="$HOME/.cargo/bin:$PATH"
+
+            # Compilation cache — survives cargo clean, branch switches
+            export RUSTC_WRAPPER=sccache
+            export SCCACHE_DIR="$HOME/.cache/sccache"
+            export SCCACHE_CACHE_SIZE=25G
+
+            # Parallel rustc (nightly feature)
+            export RUSTFLAGS="-Z threads=8"
 
             # Dynamic linker shim — lets nix-built binaries run on non-NixOS
             export NIX_LD="$(cat ${pkgs.stdenv.cc}/nix-support/dynamic-linker)"

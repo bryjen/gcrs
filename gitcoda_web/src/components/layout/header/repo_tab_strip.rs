@@ -1,5 +1,4 @@
 use leptos::prelude::*;
-use leptos_icons::Icon;
 
 #[derive(Clone)]
 struct RepoTab {
