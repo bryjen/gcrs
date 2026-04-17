@@ -23,6 +23,7 @@
             pkgs.rustup
             pkgs.pkg-config
             pkgs.llvmPackages.lld
+            pkgs.mold
 
             # TLS / HTTP (needed by reqwest / axum / tower-http)
             pkgs.openssl
