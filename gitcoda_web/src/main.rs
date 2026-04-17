@@ -21,7 +21,7 @@ async fn main() {
 
     // Initialize database
     let db = Arc::new(
-        DbPool::from_url("sqlite:gitcoda.db")
+        DbPool::from_url("sqlite:gitcoda.db?mode=rwc")
             .await
             .expect("Failed to connect to database")
     );

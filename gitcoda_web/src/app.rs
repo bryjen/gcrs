@@ -13,7 +13,7 @@ use leptos_router::{
 fn MainLayout() -> impl IntoView {
     view! {
         <main class="relative min-h-screen" data-vaul-drawer-wrapper>
-            <Header />
+            <Header />  // see header impl, we add different data per route
             <div class="mx-auto min-h-screen max-w-screen-xl px-4 md:px-8 lg:px-12">
                 <Outlet/>
             </div>
@@ -29,7 +29,7 @@ pub fn App() -> impl IntoView {
                 <ParentRoute path=path!("/") view=MainLayout>
                     <Route path=path!("") view=Home />
                 </ParentRoute>
-                <ParentRoute path=path!("/repo/") view=MainLayout>
+                <ParentRoute path=path!("/repo") view=MainLayout>
                     <Route path=path!("") view=Repo />
                 </ParentRoute>
             </Routes>

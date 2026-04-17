@@ -15,7 +15,7 @@ pub fn RepoLanguageBar(languages: Vec<LanguageBar>) -> impl IntoView {
     let canvas_ref = NodeRef::<leptos::html::Canvas>::new();
 
     // Runs only on the client — Effects are no-ops during SSR.
-    #[cfg(not(feature = "ssr"))]
+    #[cfg(all(not(feature = "ssr"), target_arch = "wasm32"))]
     {
         let languages_for_effect = languages.clone();
         Effect::new(move |_| {
@@ -70,12 +70,12 @@ pub fn RepoLanguageBar(languages: Vec<LanguageBar>) -> impl IntoView {
 
 // ── Wasm-only helpers ─────────────────────────────────────────────────────────
 
-#[cfg(not(feature = "ssr"))]
+#[cfg(all(not(feature = "ssr"), target_arch = "wasm32"))]
 fn on_language_click(_lang: &LanguageBar, open: RwSignal<bool>) {
     open.update(|v| *v = !*v);
 }
 
-#[cfg(not(feature = "ssr"))]
+#[cfg(all(not(feature = "ssr"), target_arch = "wasm32"))]
 fn build_handlers_array(languages: &[LanguageBar], open: RwSignal<bool>) -> js_sys::Array {
     use leptos::wasm_bindgen::{closure::Closure, JsCast};
     let array = js_sys::Array::new();
@@ -88,7 +88,7 @@ fn build_handlers_array(languages: &[LanguageBar], open: RwSignal<bool>) -> js_s
     array
 }
 
-#[cfg(not(feature = "ssr"))]
+#[cfg(all(not(feature = "ssr"), target_arch = "wasm32"))]
 fn build_chart_script(languages: &[LanguageBar]) -> String {
     let languages_json = languages
         .iter()
@@ -164,7 +164,7 @@ fn build_chart_script(languages: &[LanguageBar]) -> String {
     )
 }
 
-#[cfg(not(feature = "ssr"))]
+#[cfg(all(not(feature = "ssr"), target_arch = "wasm32"))]
 fn inject_or_run_script(script: String) {
     use leptos::wasm_bindgen::{closure::Closure, JsCast};
     let window = leptos::web_sys::window().unwrap();

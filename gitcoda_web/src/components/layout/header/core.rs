@@ -1,3 +1,5 @@
+//! core header components, extracted so that the `mod.rs` can focus on layout + logic
+
 use crate::components::ui::button::{ButtonSize, ButtonVariant};
 use crate::components::ui::drawer::{
     Drawer, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerPosition, DrawerTitle,
@@ -7,21 +9,8 @@ use icondata as i;
 use leptos::prelude::*;
 use leptos_icons::Icon;
 
-// ── Row 1 sub-components ──────────────────────────────────────────────────────
-
 #[component]
-fn GlobalBreadcrumb() -> impl IntoView {
-    view! {
-        <nav class="flex items-center gap-1 text-sm">
-            <a href="/" class="font-semibold text-muted-foreground hover:text-foreground">"username"</a>
-            <span class="text-muted-foreground/40">"/"</span>
-            <a href="/" class="font-semibold text-foreground hover:underline">"repo-name"</a>
-        </nav>
-    }
-}
-
-#[component]
-fn GlobalSearch() -> impl IntoView {
+pub fn GlobalSearch() -> impl IntoView {
     view! {
         <div class="hidden flex-1 max-w-sm md:flex">
             <div class="relative flex w-full items-center">
@@ -41,7 +30,7 @@ fn GlobalSearch() -> impl IntoView {
 }
 
 #[component]
-fn GlobalUserActions() -> impl IntoView {
+pub fn GlobalUserActions() -> impl IntoView {
     view! {
         <div class="flex items-center gap-0.5">
             // Notification bell
@@ -68,10 +57,8 @@ fn GlobalUserActions() -> impl IntoView {
     }
 }
 
-// ── Row 2 sub-components ──────────────────────────────────────────────────────
-
 #[component]
-fn NavDrawer() -> impl IntoView {
+pub fn NavDrawer() -> impl IntoView {
     view! {
         <Drawer>
             <DrawerTrigger
@@ -135,98 +122,5 @@ fn NavDrawer() -> impl IntoView {
                 </div>
             </DrawerContent>
         </Drawer>
-    }
-}
-
-#[derive(Clone)]
-struct RepoTab {
-    label: &'static str,
-    count: Option<u32>,
-}
-
-#[component]
-fn RepoTabStrip() -> impl IntoView {
-    let tabs = vec![
-        RepoTab {
-            label: "Code",
-            count: None,
-        },
-        RepoTab {
-            label: "Issues",
-            count: Some(3),
-        },
-        RepoTab {
-            label: "Pull requests",
-            count: Some(2),
-        },
-        RepoTab {
-            label: "Actions",
-            count: None,
-        },
-        RepoTab {
-            label: "Projects",
-            count: None,
-        },
-        RepoTab {
-            label: "Wiki",
-            count: None,
-        },
-        RepoTab {
-            label: "Security",
-            count: None,
-        },
-        RepoTab {
-            label: "Insights",
-            count: None,
-        },
-        RepoTab {
-            label: "Settings",
-            count: None,
-        },
-    ];
-
-    view! {
-        <nav class="flex items-end gap-0 overflow-x-auto">
-            {tabs.into_iter().map(|tab| view! {
-                <a
-                    href="/"
-                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2 font-bold text-sm text-muted-foreground hover:border-border hover:text-foreground whitespace-nowrap"
-                >
-                    {tab.label}
-                    {tab.count.map(|n| view! {
-                        <span class="rounded-full bg-card px-1.5 py-0.5 text-[11px] leading-none text-primary">
-                            {n}
-                        </span>
-                    })}
-                </a>
-            }).collect_view()}
-        </nav>
-    }
-}
-
-// ── Public component ──────────────────────────────────────────────────────────
-
-#[component]
-pub fn Header() -> impl IntoView {
-    view! {
-        <header class="z-50 border-b border-border bg-card">
-            // Row 1 — global nav
-            <div class="flex items-center gap-4 px-6 pt-4 pb-2">
-                <div class="flex items-center gap-6">
-                    <NavDrawer />
-                    <Icon icon=i::ImGit width="20" height="20"/>
-                    <GlobalBreadcrumb />
-                </div>
-                <div class="ml-auto flex items-center gap-5">
-                    <GlobalSearch />
-                    <GlobalUserActions />
-                </div>
-            </div>
-
-            // Row 2 — repo tab strip
-            <div class="flex items-center gap-4 px-6">
-                <RepoTabStrip />
-            </div>
-        </header>
     }
 }
