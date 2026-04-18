@@ -42,10 +42,10 @@ pub fn App() -> impl IntoView {
                 <Route path=path!("/login") view=LoginPage />
                 <Route path=path!("/signup") view=SignupPage />
                 <ParentRoute path=path!("/") view=MainLayout>
-                    <Route path=path!("") view=|| "Home placeholder" />
+                    <Route path=path!("") view=Home />
                 </ParentRoute>
                 <ParentRoute path=path!("/repo") view=MainLayout>
-                    <Route path=path!("") view=|| "Repo page disabled (compile-time complexity limit)" />
+                    <Route path=path!("") view=Repo />
                 </ParentRoute>
             </Routes>
         </Router>
