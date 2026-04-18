@@ -1,9 +1,9 @@
-use leptos::prelude::*;
-use leptos_router::hooks::use_navigate;
 use crate::pages::auth::{AuthLayout, server_fns::login};
 use components::ui::input::{Input, InputType};
 use components::ui::label::Label;
+use leptos::prelude::*;
 use leptos::web_sys;
+use leptos_router::hooks::use_navigate;
 
 #[component]
 pub fn LoginPage() -> impl IntoView {

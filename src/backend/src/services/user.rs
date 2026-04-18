@@ -26,7 +26,6 @@ impl UserService {
         {
             use argon2::{Argon2, PasswordHasher};
             use argon2::password_hash::SaltString;
-            use rand::Rng;
 
             let salt = SaltString::generate(&mut rand::thread_rng());
             let hashed = Argon2::default()

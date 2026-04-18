@@ -23,6 +23,7 @@ ssr = [
     "dep:sqlx",
     "dep:axum-extra",
     "dep:http",
+    "dep:env_logger",
     "gitcoda/ssr",
     "islands/ssr",
 ]
@@ -49,6 +50,7 @@ tower-http  = { version = "0.6",  features = ["fs"], optional = true }
 shaku       = { version = "0.6",  optional = true }
 sqlx        = { version = "0.8",  features = ["runtime-tokio-rustls", "sqlite"], optional = true }
 http        = { version = "1",    optional = true }
+env_logger  = { version = "0.11", optional = true }
 
 # Shared utilities
 serde       = { version = "1",    features = ["derive"] }

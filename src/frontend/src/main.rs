@@ -13,6 +13,8 @@ async fn main() {
 
     use axum::extract::Extension;
 
+    env_logger::init();
+
     let conf = get_configuration(None).unwrap();
     let options = conf.leptos_options;
     let addr = options.site_addr;

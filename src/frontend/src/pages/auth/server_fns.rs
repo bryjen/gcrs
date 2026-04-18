@@ -14,6 +14,8 @@ pub async fn signup(
         use leptos_axum::{extract, ResponseOptions};
         use std::sync::Arc;
 
+        log::info!("signup() called with username={}, email={}", username, email);
+
         if username.is_empty() || email.is_empty() || password.is_empty() {
             return Err(ServerFnError::new("All fields required"));
         }
@@ -24,23 +26,37 @@ pub async fn signup(
 
         let Extension(user_service) = extract::<Extension<Arc<UserService>>>()
             .await
-            .map_err(|e| ServerFnError::new(format!("Failed to extract service: {}", e)))?;
+            .map_err(|e| {
+                log::error!("Failed to extract UserService: {}", e);
+                ServerFnError::new(format!("Failed to extract service: {}", e))
+            })?;
 
+        log::info!("Creating user: {}", username);
         let user = user_service
             .create_user(username, email, password.clone())
             .await
-            .map_err(|e| ServerFnError::new(format!("Failed to create user: {}", e)))?;
+            .map_err(|e| {
+                log::error!("Failed to create user: {}", e);
+                ServerFnError::new(format!("Failed to create user: {}", e))
+            })?;
 
         // Create session
+        log::info!("Creating session for user: {}", user.id.0);
         let token = user_service
             .create_session(user.id)
             .await
-            .map_err(|e| ServerFnError::new(format!("Failed to create session: {}", e)))?;
+            .map_err(|e| {
+                log::error!("Failed to create session: {}", e);
+                ServerFnError::new(format!("Failed to create session: {}", e))
+            })?;
+
+        log::info!("Session token created: {}", token);
 
         // Set cookie via response options
         let options = use_context::<ResponseOptions>();
         if let Some(opts) = options {
             use http::header::{HeaderName, HeaderValue};
+            log::info!("Setting auth_token cookie");
             opts.insert_header(
                 HeaderName::from_static("set-cookie"),
                 HeaderValue::from_str(&format!(
@@ -49,6 +65,8 @@ pub async fn signup(
                 ))
                 .unwrap(),
             );
+        } else {
+            log::warn!("ResponseOptions not available in context");
         }
 
         Ok(user)
@@ -68,30 +86,49 @@ pub async fn login(email: String, password: String) -> Result<User, ServerFnErro
         use leptos_axum::{extract, ResponseOptions};
         use std::sync::Arc;
 
+        log::info!("login() called with email={}", email);
+
         if email.is_empty() || password.is_empty() {
             return Err(ServerFnError::new("Email and password required"));
         }
 
         let Extension(user_service) = extract::<Extension<Arc<UserService>>>()
             .await
-            .map_err(|e| ServerFnError::new(format!("Failed to extract service: {}", e)))?;
+            .map_err(|e| {
+                log::error!("Failed to extract UserService: {}", e);
+                ServerFnError::new(format!("Failed to extract service: {}", e))
+            })?;
 
+        log::info!("Verifying password for email: {}", email);
         let user = user_service
-            .verify_password(email, password)
+            .verify_password(email.clone(), password)
             .await
-            .map_err(|e| ServerFnError::new(format!("Password verification failed: {}", e)))?
-            .ok_or_else(|| ServerFnError::new("Invalid email or password"))?;
+            .map_err(|e| {
+                log::error!("Password verification error: {}", e);
+                ServerFnError::new(format!("Password verification failed: {}", e))
+            })?
+            .ok_or_else(|| {
+                log::warn!("Invalid email or password for: {}", email);
+                ServerFnError::new("Invalid email or password")
+            })?;
 
         // Create session
+        log::info!("Creating session for user: {}", user.id.0);
         let token = user_service
             .create_session(user.id)
             .await
-            .map_err(|e| ServerFnError::new(format!("Failed to create session: {}", e)))?;
+            .map_err(|e| {
+                log::error!("Failed to create session: {}", e);
+                ServerFnError::new(format!("Failed to create session: {}", e))
+            })?;
+
+        log::info!("Session token created: {}", token);
 
         // Set cookie via response options
         let options = use_context::<ResponseOptions>();
         if let Some(opts) = options {
             use http::header::{HeaderName, HeaderValue};
+            log::info!("Setting auth_token cookie");
             opts.insert_header(
                 HeaderName::from_static("set-cookie"),
                 HeaderValue::from_str(&format!(
@@ -100,6 +137,8 @@ pub async fn login(email: String, password: String) -> Result<User, ServerFnErro
                 ))
                 .unwrap(),
             );
+        } else {
+            log::warn!("ResponseOptions not available in context");
         }
 
         Ok(user)
@@ -164,21 +203,34 @@ pub async fn current_user() -> Result<Option<User>, ServerFnError> {
         use leptos_axum::extract;
         use std::sync::Arc;
 
+        log::info!("current_user() called");
+
         let Extension(user_service) = extract::<Extension<Arc<UserService>>>()
             .await
-            .map_err(|e| ServerFnError::new(format!("Failed to extract service: {}", e)))?;
+            .map_err(|e| {
+                log::error!("Failed to extract UserService: {}", e);
+                ServerFnError::new(format!("Failed to extract service: {}", e))
+            })?;
 
         let jar = extract::<CookieJar>()
             .await
-            .map_err(|e| ServerFnError::new(format!("Failed to extract cookies: {}", e)))?;
+            .map_err(|e| {
+                log::error!("Failed to extract cookies: {}", e);
+                ServerFnError::new(format!("Failed to extract cookies: {}", e))
+            })?;
 
         if let Some(cookie) = jar.get("auth_token") {
             let token = cookie.value().to_string();
+            log::info!("auth_token cookie found, token={}", token);
             user_service
                 .get_session_user(token)
                 .await
-                .map_err(|e| ServerFnError::new(format!("Failed to get user: {}", e)))
+                .map_err(|e| {
+                    log::error!("Failed to get user: {}", e);
+                    ServerFnError::new(format!("Failed to get user: {}", e))
+                })
         } else {
+            log::info!("No auth_token cookie found");
             Ok(None)
         }
     }

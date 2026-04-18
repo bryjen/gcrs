@@ -1,3 +1,4 @@
+use crate::components::layout::header::Header;
 use crate::pages::auth::login::LoginPage;
 use crate::pages::auth::signup::SignupPage;
 use crate::pages::auth::server_fns::current_user;
@@ -14,8 +15,16 @@ use leptos_router::{
 
 #[allow(non_snake_case)]
 fn MainLayout() -> impl IntoView {
+    let auth_user = use_context::<RwSignal<Option<User>>>();
+    let username = if let Some(sig) = auth_user {
+        sig.get().map(|u| u.username).unwrap_or_default()
+    } else {
+        String::new()
+    };
+
     view! {
         <main class=crate::cls!("relative min-h-screen") data-vaul-drawer-wrapper>
+            <Header username />
             <div class=crate::cls!("mx-auto min-h-screen max-w-screen-xl px-4 md:px-8 lg:px-12")>
                 <Outlet/>
             </div>
