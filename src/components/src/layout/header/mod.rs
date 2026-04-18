@@ -44,7 +44,9 @@ fn get_snd_row(pathname: &str) -> AnyView {
 }
 
 #[component]
-pub fn Header() -> impl IntoView {
+pub fn Header(
+    #[prop(default = String::new())] username: String,
+) -> impl IntoView {
     // might need to clean the route, depends on how we structure the page routes
     let location = use_location();
     let binding = location.pathname.get_untracked().clone();
@@ -60,7 +62,7 @@ pub fn Header() -> impl IntoView {
                 </div>
                 <div class="ml-auto flex items-center gap-5">
                     <GlobalSearch />
-                    <GlobalUserActions />
+                    <GlobalUserActions username=if username.is_empty() { None } else { Some(username.clone()) } />
                 </div>
             </div>
 

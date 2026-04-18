@@ -30,7 +30,28 @@ pub fn GlobalSearch() -> impl IntoView {
 }
 
 #[component]
-pub fn GlobalUserActions() -> impl IntoView {
+pub fn GlobalUserActions(
+    #[prop(default = None)] username: Option<String>,
+) -> impl IntoView {
+    let avatar_view = if let Some(user) = username {
+        let initial = user.chars().next().unwrap_or('U').to_uppercase().to_string();
+        view! {
+            <button class="ml-0.5 flex items-center rounded-full border border-border hover:border-ring">
+                <div class="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-xs font-medium text-foreground">
+                    {initial}
+                </div>
+            </button>
+        }
+        .into_any()
+    } else {
+        view! {
+            <a href="/login" class="ml-0.5 rounded-md px-3 py-1.5 text-sm text-primary hover:bg-accent">
+                "Sign in"
+            </a>
+        }
+        .into_any()
+    };
+
     view! {
         <div class="flex items-center gap-0.5">
             // Notification bell
@@ -47,12 +68,7 @@ pub fn GlobalUserActions() -> impl IntoView {
                     <path d="M0 3l5 5 5-5z" />
                 </svg>
             </button>
-            // Avatar
-            <button class="ml-0.5 flex items-center rounded-full border border-border hover:border-ring">
-                <div class="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-xs font-medium text-foreground">
-                    "U"
-                </div>
-            </button>
+            {avatar_view}
         </div>
     }
 }

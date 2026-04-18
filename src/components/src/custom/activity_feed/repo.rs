@@ -42,7 +42,7 @@ pub fn RepoCreationRow(repo: RepoCreation) -> impl IntoView {
                     {repo.owner} "/" {repo.name}
                 </a>
             </div>
-            <div class="flex items-center gap-6 text-xs text-muted-foreground w-32 justify-between">
+            <div class=cls!("flex items-center gap-6 text-sm text-muted-foreground w-32 justify-between")>
                 <div class="flex items-center gap-1">
                     <span
                         class=format!("w-3 h-3 rounded-full {}", repo.language_color_class)

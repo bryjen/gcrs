@@ -1,6 +1,9 @@
-use crate::components::layout::header::Header;
+use crate::pages::auth::login::LoginPage;
+use crate::pages::auth::signup::SignupPage;
+use crate::pages::auth::server_fns::current_user;
 use crate::pages::home::Home;
 use crate::pages::repo::Repo;
+use gitcoda::User;
 use leptos::prelude::*;
 use leptos_router::components::ParentRoute;
 use leptos_router::nested_router::Outlet;
@@ -12,9 +15,8 @@ use leptos_router::{
 #[allow(non_snake_case)]
 fn MainLayout() -> impl IntoView {
     view! {
-        <main class="relative min-h-screen" data-vaul-drawer-wrapper>
-            <Header />  // see header impl, we add different data per route
-            <div class="mx-auto min-h-screen max-w-screen-xl px-4 md:px-8 lg:px-12">
+        <main class=crate::cls!("relative min-h-screen") data-vaul-drawer-wrapper>
+            <div class=crate::cls!("mx-auto min-h-screen max-w-screen-xl px-4 md:px-8 lg:px-12")>
                 <Outlet/>
             </div>
         </main>
@@ -23,14 +25,27 @@ fn MainLayout() -> impl IntoView {
 
 #[component]
 pub fn App() -> impl IntoView {
+    let auth_user: RwSignal<Option<User>> = RwSignal::new(None);
+    provide_context(auth_user);
+
+    let user_resource = Resource::new(|| (), |_| current_user());
+
+    Effect::new(move |_| {
+        if let Some(Ok(Some(user))) = user_resource.get() {
+            auth_user.set(Some(user));
+        }
+    });
+
     view! {
         <Router>
             <Routes fallback=|| "Not found">
+                <Route path=path!("/login") view=LoginPage />
+                <Route path=path!("/signup") view=SignupPage />
                 <ParentRoute path=path!("/") view=MainLayout>
-                    <Route path=path!("") view=Home />
+                    <Route path=path!("") view=|| "Home placeholder" />
                 </ParentRoute>
                 <ParentRoute path=path!("/repo") view=MainLayout>
-                    <Route path=path!("") view=Repo />
+                    <Route path=path!("") view=|| "Repo page disabled (compile-time complexity limit)" />
                 </ParentRoute>
             </Routes>
         </Router>
@@ -46,7 +61,7 @@ pub fn shell(options: leptos::config::LeptosOptions) -> impl IntoView {
 
     view! {
         <!DOCTYPE html>
-        <html class="dark" lang="en">
+        <html class=crate::cls!("dark") lang="en">
             <head>
                 <meta charset="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />

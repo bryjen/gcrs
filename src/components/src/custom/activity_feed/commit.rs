@@ -44,7 +44,7 @@ pub fn CommitRepoRow(repo: CommitRepo) -> impl IntoView {
                 <a href="#" class="text-primary hover:underline text-sm font-medium">
                     {repo.owner} "/" {repo.name}
                 </a>
-                <span class="text-xs text-muted-foreground">{repo.commit_count} " commits"</span>
+                <span class=cls!("text-sm text-muted-foreground")>{repo.commit_count} " commits"</span>
             </div>
             <div class="w-32 flex justify-start">
                 <div

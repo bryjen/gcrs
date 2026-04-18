@@ -29,7 +29,7 @@ pub fn RepoTable() -> impl IntoView {
                 <tr class="border-b border-border hover:bg-muted/50">
                     <td colspan="4" class="py-3 px-4 max-w-0 w-full">
                         <div class="flex justify-between items-center min-w-0">
-                            <div class="flex items-center gap-2 min-w-0 overflow-hidden text-muted-foreground">
+                            <div class=crate::cls!("flex items-center gap-2 min-w-0 overflow-hidden text-muted-foreground")>
                                 <Avatar size=AvatarSize::Sm>
                                     <AvatarImage attr:src="https://api.dicebear.com/9.x/notionists/svg?seed=rustify" attr:alt="@rustify" />
                                 </Avatar>
@@ -41,7 +41,7 @@ pub fn RepoTable() -> impl IntoView {
                                 </a>
                             </div>
                             <div class="flex items-center gap-2 shrink-0 pl-4">
-                                <p class="text-xs text-muted-foreground">
+                                <p class=crate::cls!("text-sm text-muted-foreground")>
                                     <a href="" target="_blank" class="hover:underline hover:text-primary whitespace-nowrap">
                                         "59c2631"
                                     </a>
@@ -86,12 +86,12 @@ fn render_item(item: Item) -> impl IntoView {
                     {item.name}
                 </a>
             </td>
-            <td class="py-3 px-4 text-sm font-thin text-muted-foreground">
+            <td class=crate::cls!("py-3 px-4 text-sm font-thin text-muted-foreground")>
                 <a href="" target="_blank" class="hover:underline hover:text-primary/90">
                     {item.desc}
                 </a>
             </td>
-            <td class="py-3 px-4 text-sm font-thin text-muted-foreground text-right whitespace-nowrap">
+            <td class=crate::cls!("py-3 px-4 text-sm font-thin text-muted-foreground text-right whitespace-nowrap")>
                 {time_ago(item.last_mod)}
             </td>
         </tr>

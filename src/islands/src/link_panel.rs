@@ -1,103 +1,97 @@
 use leptos::prelude::*;
 use leptos_icons::Icon;
+use serde::{Deserialize, Serialize};
 
 use icondata as i;
 
-use components::ui::badge::{Badge, BadgeSize};
 use components::ui::tabs::{Tabs, TabsContent, TabsList, TabsTrigger, TabsVariant};
+use gitcoda::get_language_color;
+use gitcoda::models::git::Repository;
+
+#[server]
+pub async fn fetch_repos() -> Result<Vec<Repository>, ServerFnError> {
+    #[cfg(feature = "ssr")]
+    {
+        use axum::extract::Extension;
+        use gitcoda::RepoService;
+        use leptos_axum::extract;
+        use std::sync::Arc;
+
+        let Extension(svc) = extract::<Extension<Arc<RepoService>>>()
+            .await
+            .map_err(|e| ServerFnError::new(format!("Failed to extract RepoService: {}", e)))?;
+
+        svc.list_demo()
+            .await
+            .map_err(|e| ServerFnError::new(format!("DB error: {}", e)))
+    }
+    #[cfg(not(feature = "ssr"))]
+    {
+        Err(ServerFnError::new("Server function only available on SSR"))
+    }
+}
 
 #[island]
 pub fn LinkPanel() -> impl IntoView {
-    let tabs = vec![
-        (
-            "repos".to_string(),
-            i::MdiSourceRepositoryMultiple,
-            "Repositories",
-        ),
-        ("orgs".to_string(), i::OcOrganizationLg, "Organizations"),
-    ];
-    // two iters required, so we clone
-    // small enough, shouldn't matter
-    let tabs_clone = tabs.clone();
-
     view! {
         <Tabs default_value="repos" class="w-full">
             <TabsList variant=TabsVariant::Line>
-                {tabs_clone.into_iter().map(|(val, icon, label)| {
-                    view! {
-                        <TabsTrigger value={val}>
-                            <div class="mx-1 flex gap-2">
-                                <Icon icon={icon} width="20" height="20"/>
-                                {label}
-                            </div>
-                        </TabsTrigger>
-                    }
-                }).collect_view()}
+                <TabsTrigger value="repos">
+                    <div class="mx-1 flex gap-2">
+                        <Icon icon=i::MdiSourceRepositoryMultiple width="20" height="20"/>
+                        "Repositories"
+                    </div>
+                </TabsTrigger>
+                <TabsTrigger value="orgs">
+                    <div class="mx-1 flex gap-2">
+                        <Icon icon=i::OcOrganizationLg width="20" height="20"/>
+                        "Organizations"
+                    </div>
+                </TabsTrigger>
             </TabsList>
-            {tabs.into_iter().map(|(val, _, _)| {
-                let val_clone = val.clone();
-                view! {
-                    <TabsContent value={val}>
-                        {render_tab_content(val_clone)}
-                    </TabsContent>
-                }
-            }).collect_view()}
+            <TabsContent value="repos">
+                {render_repos_tab()}
+            </TabsContent>
+            <TabsContent value="orgs">
+                {render_orgs()}
+            </TabsContent>
         </Tabs>
     }
 }
 
-fn render_tab_content(tab: String) -> AnyView {
-    let repo_info = vec![
-        RepoInfo {
-            name: "kernel".to_string(),
-            is_private: false,
-            language_name: "C".to_string(),
-            language_color_class: "bg-[#555555]".to_string(),
-        },
-        RepoInfo {
-            name: "openclaw".to_string(),
-            is_private: true,
-            language_name: "Rust".to_string(),
-            language_color_class: "bg-[#dea584]".to_string(),
-        },
-        RepoInfo {
-            name: "dotfiles".to_string(),
-            is_private: false,
-            language_name: "Shell".to_string(),
-            language_color_class: "bg-[#89e051]".to_string(),
-        },
-        RepoInfo {
-            name: "noctua".to_string(),
-            is_private: true,
-            language_name: "C#".to_string(),
-            language_color_class: "bg-[#178600]".to_string(),
-        },
-        RepoInfo {
-            name: "libsignal-rs".to_string(),
-            is_private: false,
-            language_name: "Rust".to_string(),
-            language_color_class: "bg-[#dea584]".to_string(),
-        },
-        RepoInfo {
-            name: "infra".to_string(),
-            is_private: true,
-            language_name: "Nix".to_string(),
-            language_color_class: "bg-[#7e7eff]".to_string(),
-        },
-    ];
-
-    match tab.as_str() {
-        "repos" => render_repos(repo_info).into_any(),
-        "orgs" => render_orgs().into_any(),
-        _ => view! { <p>"unknown"</p> }.into_any(),
+fn render_repos_tab() -> impl IntoView {
+    let repos_resource = Resource::new(|| (), |_| fetch_repos());
+    view! {
+        <Suspense fallback=|| view! { <p>"Loading repos..."</p> }>
+            {move || {
+                repos_resource.read().as_ref().map(|result| {
+                    match result {
+                        Ok(repos) => {
+                            let repo_infos = repos.iter().cloned().map(|r| {
+                                let color = get_language_color(&r.language);
+                                RepoInfo {
+                                    name: r.name,
+                                    is_private: r.is_private,
+                                    language_name: r.language,
+                                    language_color: color,
+                                }
+                            }).collect();
+                            render_repos(repo_infos).into_any()
+                        }
+                        Err(e) => view! { <p>"Error: " {e.to_string()}</p> }.into_any(),
+                    }
+                })
+            }}
+        </Suspense>
     }
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct RepoInfo {
     name: String,
     is_private: bool,
     language_name: String,
-    language_color_class: String,
+    language_color: String,
 }
 
 fn render_repos(repos: Vec<RepoInfo>) -> impl IntoView {
@@ -122,7 +116,10 @@ fn render_repos(repos: Vec<RepoInfo>) -> impl IntoView {
 
                             <div class="flex items-center gap-6 text-xs text-muted-foreground min-w-12 w-fit justify-between">
                                 <div class="flex items-center gap-1">
-                                    <span class=format!("w-3 h-3 rounded-full transition-all duration-100 {}", repo.language_color_class)></span>
+                                    <span
+                                        class="w-3 h-3 rounded-full transition-all duration-100"
+                                        style=format!("background-color: {}", repo.language_color)
+                                    ></span>
                                     <span class="group-hover:text-foreground transition-all duration-100">{repo.language_name}</span>
                                 </div>
                             </div>

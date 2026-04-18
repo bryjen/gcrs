@@ -8,6 +8,23 @@ use crate::models::ids::{
 #[cfg(test)]
 mod tests;
 
+// Repository
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+pub struct Repository {
+    pub id: RepoId,
+    pub owner_id: UserId,
+    pub owner_name: String,
+    pub name: String,
+    pub lower_name: String,
+    pub description: Option<String>,
+    pub is_private: bool,
+    pub is_fork: bool,
+    pub fork_id: Option<RepoId>,
+    pub default_branch: String,
+    pub language: String,
+    pub language_color_hex: String,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct GitOid(pub String);

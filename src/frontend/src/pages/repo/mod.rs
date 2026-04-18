@@ -197,7 +197,7 @@ fn RenderSidePanel() -> impl IntoView {
                             <span class="text-sm group-hover:text-primary">"v0.7.18"</span>
                             <span class="ml-2 -mt-2 text-primary text-sm group-hover:brightness-125">"latest"</span>
                         </p>
-                        <span class="text-xs text-muted-foreground leading-none group-hover:text-primary/75">"on Apr 1"</span>
+                        <span class="text-sm text-muted-foreground leading-none group-hover:text-primary/75">"on Apr 1"</span>
                     </div>
                 </a>
 

@@ -10,15 +10,20 @@ crate-type = ["rlib"]
 # Enable branch/tag pattern matching helpers (`ProtectedBranch::matches`, etc).
 # Kept optional so the domain crate stays light and wasm-friendly by default.
 pattern = ["dep:globset"]
-# SSR deps (shaku DI, sqlx for DB)
-ssr = ["dep:shaku", "dep:sqlx"]
+# SSR deps (shaku DI, sqlx for DB, argon2 for passwords)
+ssr = ["dep:shaku", "dep:sqlx", "dep:argon2", "dep:rand"]
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 chrono = { version = "0.4", features = ["serde"] }
+lazy_static = "1.4"
+uuid = { version = "1", features = ["v4", "serde"] }
 globset = { version = "0.4", optional = true }
 shaku = { version = "0.6", optional = true }
 sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "sqlite"], optional = true }
+argon2 = { version = "0.5", optional = true }
+rand = { version = "0.8", optional = true }
 
 [dev-dependencies]
 serde_json = "1"
