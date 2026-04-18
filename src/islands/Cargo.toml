@@ -1,0 +1,31 @@
+[package]
+name = "islands"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+hydrate = ["leptos/hydrate"]
+ssr = []
+
+[dependencies]
+components    = { path = "../components" }
+leptos        = { version = "0.8.17", features = ["nightly", "islands"] }
+leptos_router = { version = "0.8.13" }
+leptos_icons  = "0.7.0"
+icondata      = "0.7.0"
+leptos_ui     = "0.3.22"
+tw_merge      = { version = "0.1.21", features = ["variant"] }
+serde         = { version = "1", features = ["derive"] }
+log           = "0.4"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+js-sys       = "0.3"
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = [
+    "Window", "Document", "Element",
+    "HtmlElement", "HtmlScriptElement", "Node",
+] }

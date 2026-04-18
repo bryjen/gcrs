@@ -1,0 +1,21 @@
+[package]
+name = "components"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+default = []
+ssr = []
+
+[dependencies]
+leptos = { version = "0.8.17", features = ["nightly"] }
+leptos_router = { version = "0.8.13" }
+leptos_icons = "0.7.0"
+icondata = "0.7.0"
+leptos_ui = "0.3.22"
+tw_merge = { version = "0.1.21", features = ["variant"] }
+strum = { version = "0.26", features = ["derive"] }
+strum_macros = "0.26"
+serde = { version = "1", features = ["derive"] }
+chrono = { version = "0.4", features = ["serde"] }
+log = "0.4"
